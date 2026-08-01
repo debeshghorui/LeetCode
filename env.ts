@@ -5,10 +5,11 @@ const envSchema = z.object({
         .string()
         .url()
         .startsWith("https://")
+        .endsWith(".supabase.co")
         .describe("The URL of the Supabase database to connect to"),
     EXPO_PUBLIC_SUPABASE_KEY: z
         .string()
-        .startsWith("sk_")
+        .startsWith("sb_publishable_")
         .describe("The API key for the Supabase database"),
 });
 
