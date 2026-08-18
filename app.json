@@ -26,6 +26,11 @@
         "plugins": [
             "expo-router",
             [
+                "expo-web-browser",
+                {
+                    "experimentalLauncherActivity": false
+                }
+            ],[
                 "expo-splash-screen",
                 {
                     "backgroundColor": "#208AEF",
