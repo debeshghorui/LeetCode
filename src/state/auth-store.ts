@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { supabase } from "../lib/supabase";
-
 import type { Session, User } from "@supabase/supabase-js";
+import { createSessionFromUrl, isAuthCallback } from "@/lib/auth";
 
 interface AuthState {
     session: Session | null;
@@ -48,7 +48,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return () => subscription.unsubscribe();
     },
     handelDeepLink: async (url: string) => {
-        // TODO: Implement deep link handling
+        if (!isAuthCallback(url)) return;
+        
+        try {
+            await createSessionFromUrl(url)
+        } catch (error) {
+            console.error(error);
+            throw new Error((error as Error).message);
+        }
     },
     signOut: async () => {
         const { error } = await supabase.auth.signOut();
