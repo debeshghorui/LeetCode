@@ -65,6 +65,7 @@ export async function executeOnCodeBox(params: {
 
     const text = await upstream.text()
     if (!upstream.ok) throw new Error(`CodeBox ${upstream.status}: ${text}`)
+
     return JSON.parse(text) as CodeBoxResponse
 }
 
