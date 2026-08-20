@@ -1,5 +1,5 @@
-import { colors } from '@/lib/theme'
-import { Stack } from 'expo-router'
+import { colors } from "@/lib/theme";
+import { Stack } from "expo-router";
 
 export default function ProblemsLayout() {
     return (
@@ -9,5 +9,5 @@ export default function ProblemsLayout() {
                 contentStyle: { flex: 1, backgroundColor: colors.background },
             }}
         />
-    )
+    );
 }

@@ -7,7 +7,7 @@
             "@/assets/*": ["./assets/*"]
         }
     },
-   "include": [
+    "include": [
         "src/**/*.ts",
         "src/**/*.tsx",
         "env.ts",

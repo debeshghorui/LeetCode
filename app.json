@@ -30,7 +30,8 @@
                 {
                     "experimentalLauncherActivity": false
                 }
-            ],[
+            ],
+            [
                 "expo-splash-screen",
                 {
                     "backgroundColor": "#208AEF",

@@ -1,5 +1,5 @@
-import { AntDesign, Feather } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
+import { AntDesign, Feather } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -10,48 +10,48 @@ import {
     StyleSheet,
     Text,
     View,
-} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import * as WebBrowser from 'expo-web-browser'
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as WebBrowser from "expo-web-browser";
 
-import { signInWithOAuth } from '@/lib/auth'
+import { signInWithOAuth } from "@/lib/auth";
 
-type Provider = 'github' | 'google'
+type Provider = "github" | "google";
 
-const LIME = '#bdf06e'
-const PEACH = '#fdba74'
-const BACKGROUND = '#0a0a0c'
-const FOREGROUND = '#fafafa'
-const MUTED = '#9e9ea7'
+const LIME = "#bdf06e";
+const PEACH = "#fdba74";
+const BACKGROUND = "#0a0a0c";
+const FOREGROUND = "#fafafa";
+const MUTED = "#9e9ea7";
 
 export default function SignInScreen() {
-    const [loading, setLoading] = useState<Provider | null>(null)
+    const [loading, setLoading] = useState<Provider | null>(null);
 
     useEffect(() => {
-        void WebBrowser.warmUpAsync()
+        void WebBrowser.warmUpAsync();
         return () => {
-            void WebBrowser.coolDownAsync()
-        }
-    }, [])
+            void WebBrowser.coolDownAsync();
+        };
+    }, []);
 
     async function handleSignIn(provider: Provider) {
-        if (loading) return
-        setLoading(provider)
+        if (loading) return;
+        setLoading(provider);
         try {
-            await signInWithOAuth(provider)
+            await signInWithOAuth(provider);
         } catch (err) {
             Alert.alert(
-                'Sign in failed',
-                err instanceof Error ? err.message : 'Unknown error'
-            )
+                "Sign in failed",
+                err instanceof Error ? err.message : "Unknown error",
+            );
         } finally {
-            setLoading(null)
+            setLoading(null);
         }
     }
 
     return (
         <View style={styles.screen}>
-            <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+            <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
@@ -60,7 +60,7 @@ export default function SignInScreen() {
                     <View style={styles.header}>
                         <View style={styles.logoBox}>
                             <Image
-                                source={require('../../../assets/images/logo.png')}
+                                source={require("../../../assets/images/logo.png")}
                                 style={styles.logoImage}
                                 resizeMode="contain"
                             />
@@ -78,9 +78,9 @@ export default function SignInScreen() {
                         <Text style={styles.titleAccent}>MobLeet.</Text>
 
                         <Text style={styles.subtitle}>
-                            Practice anywhere - track your{' '}
-                            <Text style={styles.subtitleHighlight}>streak</Text>, revisit
-                            solutions, and stay consistent.
+                            Practice anywhere - track your{" "}
+                            <Text style={styles.subtitleHighlight}>streak</Text>
+                            , revisit solutions, and stay consistent.
                         </Text>
                     </View>
 
@@ -113,13 +113,17 @@ export default function SignInScreen() {
                                 loading !== null && styles.buttonDisabled,
                             ]}
                             disabled={loading !== null}
-                            onPress={() => handleSignIn('github')}
+                            onPress={() => handleSignIn("github")}
                         >
-                            {loading === 'github' ? (
+                            {loading === "github" ? (
                                 <ActivityIndicator color={BACKGROUND} />
                             ) : (
                                 <>
-                                    <AntDesign name="github" size={18} color={BACKGROUND} />
+                                    <AntDesign
+                                        name="github"
+                                        size={18}
+                                        color={BACKGROUND}
+                                    />
                                     <Text style={styles.githubButtonLabel}>
                                         Continue with GitHub
                                     </Text>
@@ -134,13 +138,17 @@ export default function SignInScreen() {
                                 loading !== null && styles.buttonDisabled,
                             ]}
                             disabled={loading !== null}
-                            onPress={() => handleSignIn('google')}
+                            onPress={() => handleSignIn("google")}
                         >
-                            {loading === 'google' ? (
+                            {loading === "google" ? (
                                 <ActivityIndicator color={FOREGROUND} />
                             ) : (
                                 <>
-                                    <AntDesign name="google" size={18} color={FOREGROUND} />
+                                    <AntDesign
+                                        name="google"
+                                        size={18}
+                                        color={FOREGROUND}
+                                    />
                                     <Text style={styles.googleButtonLabel}>
                                         Continue with Google
                                     </Text>
@@ -150,17 +158,21 @@ export default function SignInScreen() {
                     </View>
 
                     <Text style={styles.legal}>
-                        By continuing you agree to MobLeet&apos;s{' '}
+                        {"By continuing you agree to MobLeet's "}
                         <Text
                             style={styles.legalLink}
-                            onPress={() => Linking.openURL('https://example.com/terms')}
+                            onPress={() =>
+                                Linking.openURL("https://example.com/terms")
+                            }
                         >
                             Terms
-                        </Text>{' '}
-                        and{' '}
+                        </Text>{" "}
+                        and{" "}
                         <Text
                             style={styles.legalLink}
-                            onPress={() => Linking.openURL('https://example.com/privacy')}
+                            onPress={() =>
+                                Linking.openURL("https://example.com/privacy")
+                            }
                         >
                             Privacy Policy
                         </Text>
@@ -169,7 +181,7 @@ export default function SignInScreen() {
                 </ScrollView>
             </SafeAreaView>
         </View>
-    )
+    );
 }
 
 function FeatureRow({
@@ -178,15 +190,18 @@ function FeatureRow({
     title,
     subtitle,
 }: {
-    icon: keyof typeof Feather.glyphMap
-    color: string
-    title: string
-    subtitle: string
+    icon: keyof typeof Feather.glyphMap;
+    color: string;
+    title: string;
+    subtitle: string;
 }) {
     return (
         <View style={styles.featureRow}>
             <View
-                style={[styles.featureIconBox, { backgroundColor: `${color}24` }]}
+                style={[
+                    styles.featureIconBox,
+                    { backgroundColor: `${color}24` },
+                ]}
             >
                 <Feather name={icon} size={18} color={color} />
             </View>
@@ -195,7 +210,7 @@ function FeatureRow({
                 <Text style={styles.featureSubtitle}>{subtitle}</Text>
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -213,20 +228,20 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
     },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     logoBox: {
         width: 44,
         height: 44,
         borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        backgroundColor: 'rgba(189, 240, 110, 0.14)',
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        backgroundColor: "rgba(189, 240, 110, 0.14)",
         borderWidth: 1,
-        borderColor: 'rgba(189, 240, 110, 0.32)',
+        borderColor: "rgba(189, 240, 110, 0.32)",
     },
     logoImage: {
         width: 28,
@@ -241,16 +256,16 @@ const styles = StyleSheet.create({
         marginTop: 40,
     },
     badge: {
-        alignSelf: 'flex-start',
-        flexDirection: 'row',
-        alignItems: 'center',
+        alignSelf: "flex-start",
+        flexDirection: "row",
+        alignItems: "center",
         paddingHorizontal: 12,
         paddingVertical: 4,
         borderRadius: 999,
         marginBottom: 16,
-        backgroundColor: 'rgba(189, 240, 110, 0.12)',
+        backgroundColor: "rgba(189, 240, 110, 0.12)",
         borderWidth: 1,
-        borderColor: 'rgba(189, 240, 110, 0.28)',
+        borderColor: "rgba(189, 240, 110, 0.28)",
     },
     badgeDot: {
         width: 6,
@@ -262,19 +277,19 @@ const styles = StyleSheet.create({
     badgeText: {
         color: LIME,
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: "600",
     },
     title: {
         color: FOREGROUND,
         fontSize: 36,
         lineHeight: 42,
-        fontWeight: '700',
+        fontWeight: "700",
     },
     titleAccent: {
         color: LIME,
         fontSize: 36,
         lineHeight: 42,
-        fontWeight: '700',
+        fontWeight: "700",
     },
     subtitle: {
         color: MUTED,
@@ -290,20 +305,20 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     featureRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         borderRadius: 16,
         padding: 14,
-        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+        backgroundColor: "rgba(255, 255, 255, 0.03)",
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.06)',
+        borderColor: "rgba(255, 255, 255, 0.06)",
     },
     featureIconBox: {
         width: 40,
         height: 40,
         borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     featureCopy: {
         flex: 1,
@@ -312,7 +327,7 @@ const styles = StyleSheet.create({
     featureTitle: {
         color: FOREGROUND,
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: "600",
     },
     featureSubtitle: {
         color: MUTED,
@@ -323,9 +338,9 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     githubButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
         gap: 10,
         minHeight: 52,
         borderRadius: 16,
@@ -333,15 +348,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     googleButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
         gap: 10,
         minHeight: 52,
         borderRadius: 16,
-        backgroundColor: 'rgba(255, 255, 255, 0.06)',
+        backgroundColor: "rgba(255, 255, 255, 0.06)",
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.12)',
+        borderColor: "rgba(255, 255, 255, 0.12)",
         paddingHorizontal: 20,
     },
     buttonPressed: {
@@ -353,23 +368,23 @@ const styles = StyleSheet.create({
     githubButtonLabel: {
         color: BACKGROUND,
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: "600",
     },
     googleButtonLabel: {
         color: FOREGROUND,
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: "600",
     },
 
     legal: {
         color: MUTED,
         fontSize: 12,
         lineHeight: 18,
-        textAlign: 'center',
+        textAlign: "center",
         marginTop: 24,
     },
     legalLink: {
         color: PEACH,
-        textDecorationLine: 'underline',
+        textDecorationLine: "underline",
     },
-})
+});

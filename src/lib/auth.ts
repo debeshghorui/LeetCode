@@ -18,7 +18,7 @@ export function isAuthCallback(url: string) {
 }
 
 /**
- * 
+ *
  * @param url - The URL to create a session from. example: https://app.com/auth/callback?params={...}&errorCode=...
  * @returns The session created from the URL.
  * @throws An error if the URL is not a valid auth callback URL.
@@ -31,25 +31,29 @@ export async function createSessionFromUrl(url: string) {
     }
 
     if (params.code) {
-        const existing = codeExchanges.get(params.code)
+        const existing = codeExchanges.get(params.code);
         if (existing) return existing;
         // iife function to Exchange the code for a session
         const exchange = (async () => {
-            const { data, error } = await supabase.auth.exchangeCodeForSession(params.code)
+            const { data, error } = await supabase.auth.exchangeCodeForSession(
+                params.code,
+            );
             if (error) {
-                const { data: { session } } = await supabase.auth.getSession()
-                if (session) return session
-                throw error
+                const {
+                    data: { session },
+                } = await supabase.auth.getSession();
+                if (session) return session;
+                throw error;
             }
-            return data.session
-        })()
+            return data.session;
+        })();
 
-        codeExchanges.set(params.code, exchange)
+        codeExchanges.set(params.code, exchange);
 
         try {
-            return await exchange
+            return await exchange;
         } finally {
-            codeExchanges.delete(params.code)
+            codeExchanges.delete(params.code);
         }
     }
 
@@ -57,32 +61,32 @@ export async function createSessionFromUrl(url: string) {
         const { data, error } = await supabase.auth.setSession({
             access_token: params.access_token,
             refresh_token: params.refresh_token,
-        })
-        if (error) throw error
-        return data.session
+        });
+        if (error) throw error;
+        return data.session;
     }
 }
 
 /**
- * 
+ *
  * @param redirectUri - The redirect URI to display in the message.
  * @returns The message to display to the user.
  */
 function getRedirectSetupMessage(redirectUri: string) {
     return [
-        'Supabase rejected the app redirect URL and sent you to localhost instead.',
-        '',
-        'Open Supabase Dashboard → Authentication → URL Configuration and add:',
+        "Supabase rejected the app redirect URL and sent you to localhost instead.",
+        "",
+        "Open Supabase Dashboard → Authentication → URL Configuration and add:",
         `  ${redirectUri}`,
-        '  exp://**',
-        '  leetcode://**',
-        '',
-        'Then try signing in again.',
-    ].join('\n')
+        "  exp://**",
+        "  leetcode://**",
+        "",
+        "Then try signing in again.",
+    ].join("\n");
 }
 
 /**
- * 
+ *
  * @param provider - The provider to sign in with.
  * @returns The session created from the OAuth URL.
  * @throws An error if the provider is not supported or the URL is not a valid auth callback URL.
@@ -91,10 +95,12 @@ function getRedirectSetupMessage(redirectUri: string) {
  * @throws An error if the OAuth URL is not a valid auth callback URL.
  */
 export async function signInWithOAuth(provider: Provider) {
-    const redirectTo = getAuthRedirectUrl()
+    const redirectTo = getAuthRedirectUrl();
 
     if (!redirectTo) {
-        throw new Error('Could not determine OAuth redirect URI for this platform.')
+        throw new Error(
+            "Could not determine OAuth redirect URI for this platform.",
+        );
     }
 
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -103,34 +109,34 @@ export async function signInWithOAuth(provider: Provider) {
             redirectTo,
             skipBrowserRedirect: true,
         },
-    })
+    });
 
-    if (error) throw error
-    if (!data.url) throw new Error('No OAuth URL returned')
+    if (error) throw error;
+    if (!data.url) throw new Error("No OAuth URL returned");
 
     const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo, {
         showInRecents: true,
-    })
+    });
 
-    if (result.type === 'success') {
-        return createSessionFromUrl(result.url)
+    if (result.type === "success") {
+        return createSessionFromUrl(result.url);
     }
 
-    if (result.type === 'cancel' || result.type === 'dismiss') {
-        return
+    if (result.type === "cancel" || result.type === "dismiss") {
+        return;
     }
 
-    throw new Error(getRedirectSetupMessage(redirectTo))
+    throw new Error(getRedirectSetupMessage(redirectTo));
 }
 
 /**
- * 
+ *
  * @returns The session created from the OAuth URL.
  * @throws An error if the OAuth URL is not returned.
  * @throws An error if the OAuth URL is not a valid auth callback URL.
  * @throws An error if the OAuth URL is not a valid auth callback URL.
  */
 export async function signOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
 }

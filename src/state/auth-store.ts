@@ -9,7 +9,7 @@ interface AuthState {
     isLoading: boolean;
     isInitialized: boolean;
 
-    initialize: () => void;
+    initialize: () => () => void;
     handelDeepLink: (url: string) => Promise<void>;
     signOut: () => Promise<void>;
 }
@@ -20,19 +20,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     isLoading: true,
     isInitialized: false,
 
-    initialize: async () => {
+    initialize: () => {
         if (get().isInitialized) return () => {};
 
         set({ isInitialized: true });
 
         supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                set({
-                    session,
-                    user: session?.user ?? null,
-                    isLoading: false,
-                });
-            }
+            set({
+                session: session ?? null,
+                user: session?.user ?? null,
+                isLoading: false,
+            });
         });
 
         const {
@@ -49,9 +47,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
     handelDeepLink: async (url: string) => {
         if (!isAuthCallback(url)) return;
-        
+
         try {
-            await createSessionFromUrl(url)
+            await createSessionFromUrl(url);
         } catch (error) {
             console.error(error);
             throw new Error((error as Error).message);
@@ -61,8 +59,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const { error } = await supabase.auth.signOut();
         if (error) {
             console.error(error);
-            throw error.message;
+            throw new Error(error.message);
         }
-        set({ session: null, user: null, isLoading: true });
+        set({ session: null, user: null, isLoading: false });
     },
 }));

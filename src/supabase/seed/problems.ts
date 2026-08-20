@@ -16,54 +16,54 @@
  *   await supabase.from('problems').insert(problemInserts)
  */
 
-export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
+export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
 export type LanguageExample = {
-    input: string
-    output: string
-    explanation?: string
-}
+    input: string;
+    output: string;
+    explanation?: string;
+};
 
 export type ProblemSeed = {
-    title: string
-    description: string
-    difficulty: Difficulty
-    tags: string[]
-    constraints: string
-    hints?: string
-    editorial?: string
-    testCases: { input: string; output: string }[]
+    title: string;
+    description: string;
+    difficulty: Difficulty;
+    tags: string[];
+    constraints: string;
+    hints?: string;
+    editorial?: string;
+    testCases: { input: string; output: string }[];
     examples: {
-        JAVASCRIPT: LanguageExample
-        PYTHON: LanguageExample
-        JAVA: LanguageExample
-    }
+        JAVASCRIPT: LanguageExample;
+        PYTHON: LanguageExample;
+        JAVA: LanguageExample;
+    };
     codeSnippets: {
-        JAVASCRIPT: string
-        PYTHON: string
-        JAVA: string
-    }
+        JAVASCRIPT: string;
+        PYTHON: string;
+        JAVA: string;
+    };
     referenceSolutions: {
-        JAVASCRIPT: string
-        PYTHON: string
-        JAVA: string
-    }
-}
+        JAVASCRIPT: string;
+        PYTHON: string;
+        JAVA: string;
+    };
+};
 
 /** Row shape for public.problems */
 export type ProblemInsert = {
-    title: string
-    description: string
-    difficulty: Difficulty
-    tags: string[]
-    constraints: string
-    hints: string | null
-    editorial: string | null
-    test_cases: ProblemSeed['testCases']
-    examples: ProblemSeed['examples']
-    code_snippets: ProblemSeed['codeSnippets']
-    reference_solutions: ProblemSeed['referenceSolutions']
-}
+    title: string;
+    description: string;
+    difficulty: Difficulty;
+    tags: string[];
+    constraints: string;
+    hints: string | null;
+    editorial: string | null;
+    test_cases: ProblemSeed["testCases"];
+    examples: ProblemSeed["examples"];
+    code_snippets: ProblemSeed["codeSnippets"];
+    reference_solutions: ProblemSeed["referenceSolutions"];
+};
 
 export function toProblemInsert(problem: ProblemSeed): ProblemInsert {
     return {
@@ -78,43 +78,42 @@ export function toProblemInsert(problem: ProblemSeed): ProblemInsert {
         examples: problem.examples,
         code_snippets: problem.codeSnippets,
         reference_solutions: problem.referenceSolutions,
-    }
+    };
 }
 
 export const sampleDpData: ProblemSeed = {
-    title: 'Climbing Stairs',
+    title: "Climbing Stairs",
     description:
-        'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?',
-    difficulty: 'EASY',
-    tags: ['Dynamic Programming', 'Math', 'Memoization'],
-    constraints: '1 <= n <= 45',
-    hints:
-        'To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.',
+        "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    difficulty: "EASY",
+    tags: ["Dynamic Programming", "Math", "Memoization"],
+    constraints: "1 <= n <= 45",
+    hints: "To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.",
     editorial:
-        'This is a classic dynamic programming problem. The number of ways to reach the nth step is the sum of the number of ways to reach the (n-1)th step and the (n-2)th step, forming a Fibonacci-like sequence.',
+        "This is a classic dynamic programming problem. The number of ways to reach the nth step is the sum of the number of ways to reach the (n-1)th step and the (n-2)th step, forming a Fibonacci-like sequence.",
     testCases: [
-        { input: '2', output: '2' },
-        { input: '3', output: '3' },
-        { input: '4', output: '5' },
+        { input: "2", output: "2" },
+        { input: "3", output: "3" },
+        { input: "4", output: "5" },
     ],
     examples: {
         JAVASCRIPT: {
-            input: 'n = 2',
-            output: '2',
+            input: "n = 2",
+            output: "2",
             explanation:
-                'There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps',
+                "There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps",
         },
         PYTHON: {
-            input: 'n = 3',
-            output: '3',
+            input: "n = 3",
+            output: "3",
             explanation:
-                'There are three ways to climb to the top:\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step',
+                "There are three ways to climb to the top:\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step",
         },
         JAVA: {
-            input: 'n = 4',
-            output: '5',
+            input: "n = 4",
+            output: "5",
             explanation:
-                'There are five ways to climb to the top:\n1. 1 step + 1 step + 1 step + 1 step\n2. 1 step + 1 step + 2 steps\n3. 1 step + 2 steps + 1 step\n4. 2 steps + 1 step + 1 step\n5. 2 steps + 2 steps',
+                "There are five ways to climb to the top:\n1. 1 step + 1 step + 1 step + 1 step\n2. 1 step + 1 step + 2 steps\n3. 1 step + 2 steps + 1 step\n4. 2 steps + 1 step + 1 step\n5. 2 steps + 2 steps",
         },
     },
     codeSnippets: {
@@ -239,39 +238,38 @@ class Main {
   }
 }`,
     },
-}
+};
 
 export const sampleStringProblem: ProblemSeed = {
-    title: 'Valid Palindrome',
+    title: "Valid Palindrome",
     description:
-        'A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.',
-    difficulty: 'EASY',
-    tags: ['String', 'Two Pointers'],
+        "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
+    difficulty: "EASY",
+    tags: ["String", "Two Pointers"],
     constraints:
-        '1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.',
-    hints:
-        'Consider using two pointers, one from the start and one from the end, moving towards the center.',
+        "1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.",
+    hints: "Consider using two pointers, one from the start and one from the end, moving towards the center.",
     editorial:
-        'We can use two pointers approach to check if the string is a palindrome. One pointer starts from the beginning and the other from the end, moving towards each other.',
+        "We can use two pointers approach to check if the string is a palindrome. One pointer starts from the beginning and the other from the end, moving towards each other.",
     testCases: [
-        { input: 'A man, a plan, a canal: Panama', output: 'true' },
-        { input: 'race a car', output: 'false' },
-        { input: ' ', output: 'true' },
+        { input: "A man, a plan, a canal: Panama", output: "true" },
+        { input: "race a car", output: "false" },
+        { input: " ", output: "true" },
     ],
     examples: {
         JAVASCRIPT: {
             input: 's = "A man, a plan, a canal: Panama"',
-            output: 'true',
+            output: "true",
             explanation: '"amanaplanacanalpanama" is a palindrome.',
         },
         PYTHON: {
             input: 's = "A man, a plan, a canal: Panama"',
-            output: 'true',
+            output: "true",
             explanation: '"amanaplanacanalpanama" is a palindrome.',
         },
         JAVA: {
             input: 's = "A man, a plan, a canal: Panama"',
-            output: 'true',
+            output: "true",
             explanation: '"amanaplanacanalpanama" is a palindrome.',
         },
     },
@@ -430,9 +428,10 @@ public class Main {
 }
 `,
     },
-}
+};
 
 /** All problems to seed — add more entries here. */
-export const problemSeeds: ProblemSeed[] = [sampleDpData, sampleStringProblem]
+export const problemSeeds: ProblemSeed[] = [sampleDpData, sampleStringProblem];
 
-export const problemInserts: ProblemInsert[] = problemSeeds.map(toProblemInsert)
+export const problemInserts: ProblemInsert[] =
+    problemSeeds.map(toProblemInsert);
