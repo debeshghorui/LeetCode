@@ -77,12 +77,7 @@ export function toCaseResult(
     const actualOutput = normalise(data.stdout)
     const expectedOutput = normalise(testCase.output)
     const passed = actualOutput === expectedOutput
-    const outcome: RunOutcome =
-        data.status.id === 3 || data.status.id === 4
-            ? passed
-                ? 'accepted'
-                : 'wrong-answer'
-            : 'error'
+    const outcome: RunOutcome = data.status.id === 3 || data.status.id === 4 ? passed ? 'accepted' : 'wrong-answer' : 'error'
 
     return {
         index,
@@ -113,6 +108,7 @@ export async function runAllTestCases(params: {
                     stdin: testCase.input,
                     expectedOutput: testCase.output,
                 })
+
                 return toCaseResult(index, testCase, data)
             } catch (err) {
                 return {
@@ -134,5 +130,6 @@ export async function runAllTestCases(params: {
 export function outcomeStatusLabel(outcome: RunOutcome) {
     if (outcome === 'accepted') return 'Accepted'
     if (outcome === 'wrong-answer') return 'Wrong Answer'
+
     return 'Error'
 }
