@@ -94,6 +94,4 @@ export async function POST(request: Request) {
         total: results.length,
         results,
     })
-
-
 }
