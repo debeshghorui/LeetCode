@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Provider, Session, User } from "@supabase/supabase-js";
+import type { Provider, Session } from "@supabase/supabase-js";
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
