@@ -44,7 +44,7 @@ export async function executeOnCodeBox(params: {
     stdin: string
     expectedOutput: string
 }) {
-    const token = process.env.CODEBOX_TOKEN
+    const token = process.env.CODEBOX_API_TOKEN
     if (!token) throw new Error('CODEBOX_TOKEN is not configured on the server.')
 
     const upstream = await fetch('https://chaicode.net/api/execute', {
