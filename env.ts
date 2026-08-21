@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 const envSchema = z.object({
+    APP_VARIANT: z
+        .enum(["development", "preview", "production"])
+        .optional()
+        .default("development")
+        .describe("The application build variant"),
     EXPO_PUBLIC_SUPABASE_URL: z
         .string()
         .url()
