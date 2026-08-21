@@ -1,8 +1,24 @@
 import type { ConfigContext, ExpoConfig } from "@expo/config";
-import { env } from "./env";
 
-const IS_DEV = env.APP_VARIANT === "development";
-const IS_PREVIEW = env.APP_VARIANT === "preview";
+type AppVariant = "development" | "preview" | "production";
+
+const resolveAppVariant = (): AppVariant => {
+    const variant = process.env.APP_VARIANT;
+
+    if (variant === "preview") {
+        return "preview";
+    }
+
+    if (variant === "production") {
+        return "production";
+    }
+
+    return "development";
+};
+
+const APP_VARIANT = resolveAppVariant();
+const IS_DEV = APP_VARIANT === "development";
+const IS_PREVIEW = APP_VARIANT === "preview";
 
 const getUniqueIdentifier = () => {
     if (IS_DEV) {
