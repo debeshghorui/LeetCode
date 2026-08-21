@@ -51,6 +51,8 @@
         "typescript": "~6.0.3"
     },
     "scripts": {
+        "dev": "APP_VERIANT=devlopment bunx expo start",
+        "preview": "APP_VERIANT=preview bunx expo start",
         "start": "expo start",
         "reset-project": "node ./scripts/reset-project.js",
         "android": "expo start --android",
