@@ -1,0 +1,22 @@
+name: Create Production Builds
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  typecheck:
+    environment: production
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - run: bun run lint
+      - run: bunx tsc --noEmit
+
+  build_android:
+    needs: [typecheck]
+    type: build
+    environment: production
+    params:
+      platform: android
+      profile: production
