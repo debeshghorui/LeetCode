@@ -1,0 +1,30 @@
+Paste these into Google Play Console. Create the app with package name com.debeshghorui.mobleet.
+
+App name
+MobLeet
+
+Short description
+Practice coding problems and keep track of your progress.
+
+Full description
+MobLeet is a coding-practice app for your phone.
+
+Sign in with Google or GitHub, work through problems, submit your solution, and see what you have solved. Your profile keeps a count of solved problems, submissions, and active days.
+
+MobLeet is an independent app. It is not affiliated with LeetCode.
+
+You can delete your account from Profile. That removes your account and practice history.
+
+Category
+Education
+
+Tags
+education, coding, practice
+
+Contact
+Use a real email you control. Play Console will show it on the store listing.
+
+Assets in this folder
+- icon-512.png is the 512×512 store icon
+- feature-graphic.png is the 1024×500 feature graphic
+- privacy.html, terms.html, and delete-account.html must be hosted on a public URL before you submit the listing

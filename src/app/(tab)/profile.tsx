@@ -5,7 +5,7 @@ import { fetchSolvedCount, fetchUserSubmissionActivity } from "@/lib/problems";
 import { colors } from "@/lib/theme";
 import { getAvatar, getDisplayName, getInitials } from "@/lib/user";
 import { Feather } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -24,8 +24,10 @@ export default function ProfileScreen() {
         bottomExtra: 24,
         topExtra: 12,
     });
-    const { user, isLoading, signOut } = useAuth();
+    const router = useRouter();
+    const { user, isLoading, signOut, deleteAccount } = useAuth();
     const [signingOut, setSigningOut] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [activity, setActivity] = useState<Map<string, number>>(new Map());
     const [solvedCount, setSolvedCount] = useState(0);
     const [statsLoading, setStatsLoading] = useState(true);
@@ -135,7 +137,7 @@ export default function ProfileScreen() {
                                 setSigningOut(false);
                             }
                         }}
-                        disabled={signingOut}
+                        disabled={signingOut || deleting}
                         style={({ pressed }) => [
                             styles.signOutButton,
                             (pressed || signingOut) && styles.pressed,
@@ -152,6 +154,72 @@ export default function ProfileScreen() {
                                 />
                                 <Text style={styles.signOutLabel}>
                                     Sign out
+                                </Text>
+                            </>
+                        )}
+                    </Pressable>
+
+                    <Pressable
+                        onPress={() => router.push("/legal/privacy")}
+                        style={({ pressed }) => [
+                            styles.linkButton,
+                            pressed && styles.pressed,
+                        ]}
+                    >
+                        <Feather
+                            name="shield"
+                            size={16}
+                            color={colors.foreground}
+                        />
+                        <Text style={styles.linkLabel}>Privacy policy</Text>
+                    </Pressable>
+
+                    <Pressable
+                        onPress={() => {
+                            Alert.alert(
+                                "Delete account?",
+                                "This permanently deletes your MobLeet account, submissions, and solved progress.",
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    {
+                                        text: "Delete",
+                                        style: "destructive",
+                                        onPress: () => {
+                                            setDeleting(true);
+                                            void deleteAccount()
+                                                .catch((err: unknown) => {
+                                                    Alert.alert(
+                                                        "Could not delete account",
+                                                        err instanceof Error
+                                                            ? err.message
+                                                            : "Unknown error",
+                                                    );
+                                                })
+                                                .finally(() =>
+                                                    setDeleting(false),
+                                                );
+                                        },
+                                    },
+                                ],
+                            );
+                        }}
+                        disabled={signingOut || deleting}
+                        style={({ pressed }) => [
+                            styles.deleteButton,
+                            (pressed || deleting) && styles.pressed,
+                        ]}
+                    >
+                        {deleting ? (
+                            <ActivityIndicator color={colors.danger} />
+                        ) : (
+                            <>
+                                <Feather
+                                    name="trash-2"
+                                    size={16}
+                                    color={colors.danger}
+                                />
+                                <Text style={styles.deleteLabel}>
+                                    Delete account
                                 </Text>
                             </>
                         )}
@@ -251,5 +319,31 @@ const styles = StyleSheet.create({
         borderColor: colors.cardBorder,
     },
     signOutLabel: { color: colors.danger, fontSize: 15, fontWeight: "600" },
+    linkButton: {
+        marginTop: 12,
+        height: 52,
+        borderRadius: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        backgroundColor: colors.card,
+        borderWidth: 1,
+        borderColor: colors.cardBorder,
+    },
+    linkLabel: { color: colors.foreground, fontSize: 15, fontWeight: "600" },
+    deleteButton: {
+        marginTop: 12,
+        height: 52,
+        borderRadius: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        backgroundColor: colors.dangerBg,
+        borderWidth: 1,
+        borderColor: colors.danger,
+    },
+    deleteLabel: { color: colors.danger, fontSize: 15, fontWeight: "600" },
     pressed: { opacity: 0.7 },
 });

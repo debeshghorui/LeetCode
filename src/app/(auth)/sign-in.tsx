@@ -1,10 +1,10 @@
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import {
     ActivityIndicator,
     Alert,
     Image,
-    Linking,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -25,6 +25,7 @@ const FOREGROUND = "#fafafa";
 const MUTED = "#9e9ea7";
 
 export default function SignInScreen() {
+    const router = useRouter();
     const [loading, setLoading] = useState<Provider | null>(null);
 
     useEffect(() => {
@@ -161,18 +162,14 @@ export default function SignInScreen() {
                         {"By continuing you agree to MobLeet's "}
                         <Text
                             style={styles.legalLink}
-                            onPress={() =>
-                                Linking.openURL("https://example.com/terms")
-                            }
+                            onPress={() => router.push("/legal/terms")}
                         >
                             Terms
                         </Text>{" "}
                         and{" "}
                         <Text
                             style={styles.legalLink}
-                            onPress={() =>
-                                Linking.openURL("https://example.com/privacy")
-                            }
+                            onPress={() => router.push("/legal/privacy")}
                         >
                             Privacy Policy
                         </Text>

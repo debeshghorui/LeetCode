@@ -79,7 +79,7 @@ function getRedirectSetupMessage(redirectUri: string) {
         "Open Supabase Dashboard → Authentication → URL Configuration and add:",
         `  ${redirectUri}`,
         "  exp://**",
-        "  leetcode://**",
+        "  mobleet://**",
         "",
         "Then try signing in again.",
     ].join("\n");
@@ -139,4 +139,26 @@ export async function signInWithOAuth(provider: Provider) {
 export async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+}
+
+/**
+ * Deletes the signed-in Supabase user. Related profile, submission, and
+ * progress rows cascade from `auth.users`. Requires `delete_own_account`
+ * from `src/supabase/delete_own_account.sql`.
+ */
+export async function deleteOwnAccount() {
+    const { error } = await supabase.rpc("delete_own_account");
+    if (error) {
+        if (error.message.includes("delete_own_account")) {
+            throw new Error(
+                "Account deletion is not enabled yet. Run src/supabase/delete_own_account.sql in the Supabase SQL editor, then try again.",
+            );
+        }
+        throw error;
+    }
+
+    const { error: signOutError } = await supabase.auth.signOut({
+        scope: "local",
+    });
+    if (signOutError) throw signOutError;
 }

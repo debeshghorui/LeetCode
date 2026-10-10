@@ -19,6 +19,12 @@ export function resolveApiBaseUrl() {
     if (process.env.EXPO_PUBLIC_API_BASE_URL)
         return process.env.EXPO_PUBLIC_API_BASE_URL;
 
+    if (!__DEV__) {
+        throw new Error(
+            "Submissions are unavailable. Set EXPO_PUBLIC_API_BASE_URL to the deployed API before building for Google Play.",
+        );
+    }
+
     const hostUri =
         Constants.expoConfig?.hostUri ??
         (Constants as { manifest?: { hostUri?: string } }).manifest?.hostUri;

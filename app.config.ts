@@ -22,22 +22,22 @@ const IS_PREVIEW = APP_VARIANT === "preview";
 
 const getUniqueIdentifier = () => {
     if (IS_DEV) {
-        return "com.debeshghorui.LeetCode.dev";
+        return "com.debeshghorui.mobleet.dev";
     }
     if (IS_PREVIEW) {
-        return "com.debeshghorui.LeetCode.preview";
+        return "com.debeshghorui.mobleet.preview";
     }
-    return "com.debeshghorui.LeetCode";
+    return "com.debeshghorui.mobleet";
 };
 
 const getAppName = () => {
     if (IS_DEV) {
-        return "LeetCode (Dev)";
+        return "MobLeet (Dev)";
     }
     if (IS_PREVIEW) {
-        return "LeetCode (Preview)";
+        return "MobLeet (Preview)";
     }
-    return "LeetCode";
+    return "MobLeet";
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -47,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "leetcode",
+    scheme: "mobleet",
     userInterfaceStyle: "automatic",
     ios: {
         ...config.ios,
@@ -57,18 +57,33 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     android: {
         ...config.android,
         adaptiveIcon: {
-            backgroundColor: "#E6F4FE",
+            backgroundColor: "#0a0a0c",
             foregroundImage: "./assets/images/android-icon-foreground.png",
-            backgroundImage: "./assets/images/android-icon-background.png",
             monochromeImage: "./assets/images/android-icon-monochrome.png",
         },
         predictiveBackGestureEnabled: false,
         package: getUniqueIdentifier(),
+        blockedPermissions: [
+            "android.permission.CAMERA",
+            "android.permission.RECORD_AUDIO",
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.READ_CONTACTS",
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "com.google.android.gms.permission.AD_ID",
+        ],
     },
     web: {
         ...config.web,
         output: "static",
         favicon: "./assets/images/favicon.png",
+    },
+    updates: {
+        url: "https://u.expo.dev/7c586b8a-b9d1-4203-afd6-267f00bb1af3",
+    },
+    runtimeVersion: {
+        policy: "appVersion",
     },
     plugins: [
         "expo-router",
@@ -81,9 +96,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         [
             "expo-splash-screen",
             {
-                backgroundColor: "#208AEF",
+                backgroundColor: "#0a0a0c",
                 image: "./assets/images/splash-icon.png",
-                imageWidth: 76,
+                imageWidth: 200,
             },
         ],
     ],

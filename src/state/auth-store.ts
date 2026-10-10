@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { supabase } from "../lib/supabase";
 import type { Session, User } from "@supabase/supabase-js";
-import { createSessionFromUrl, isAuthCallback } from "@/lib/auth";
+import {
+    createSessionFromUrl,
+    deleteOwnAccount,
+    isAuthCallback,
+} from "@/lib/auth";
 
 interface AuthState {
     session: Session | null;
@@ -12,6 +16,7 @@ interface AuthState {
     initialize: () => () => void;
     handelDeepLink: (url: string) => Promise<void>;
     signOut: () => Promise<void>;
+    deleteAccount: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -61,6 +66,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             console.error(error);
             throw new Error(error.message);
         }
+        set({ session: null, user: null, isLoading: false });
+    },
+    deleteAccount: async () => {
+        await deleteOwnAccount();
         set({ session: null, user: null, isLoading: false });
     },
 }));

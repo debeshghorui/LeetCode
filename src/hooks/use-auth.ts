@@ -5,6 +5,7 @@ export const useAuth = () => {
     const user = useAuthStore((data) => data.user);
     const isLoading = useAuthStore((data) => data.isLoading);
     const signOut = useAuthStore((data) => data.signOut);
+    const deleteAccount = useAuthStore((data) => data.deleteAccount);
 
-    return { session, user, isLoading, signOut };
+    return { session, user, isLoading, signOut, deleteAccount };
 };

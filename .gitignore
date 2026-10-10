@@ -41,3 +41,7 @@ example
 # generated native folders
 /ios
 /android
+
+# Play Console credentials — never commit
+*-service-account.json
+play-service-account.json

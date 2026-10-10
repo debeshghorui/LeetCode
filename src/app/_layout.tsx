@@ -27,8 +27,9 @@ function RootNavigator() {
         const rootSegment = segments.at(0) as string | undefined;
         const inAuthGroup = rootSegment === "(auth)";
         const inAuthCallback = rootSegment === "auth";
+        const inLegal = rootSegment === "legal";
 
-        if (!session && !inAuthGroup && !inAuthCallback) {
+        if (!session && !inAuthGroup && !inAuthCallback && !inLegal) {
             router.replace("/(auth)/sign-in" as never);
         } else if (session && inAuthGroup) {
             router.replace("/" as never);
@@ -63,6 +64,7 @@ function RootNavigator() {
             <Stack.Screen name="(tab)" />
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="auth/callback" />
+            <Stack.Screen name="legal" />
         </Stack>
     );
 }
