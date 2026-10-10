@@ -1,11 +1,12 @@
 import { useAuthStore } from "@/state/auth-store";
 
-export const useAuth = () => {
-    const session = useAuthStore((data) => data.session);
-    const user = useAuthStore((data) => data.user);
-    const isLoading = useAuthStore((data) => data.isLoading);
-    const signOut = useAuthStore((data) => data.signOut);
-    const deleteAccount = useAuthStore((data) => data.deleteAccount);
+export function useAuth() {
+    const session = useAuthStore((state) => state.session);
+    const user = useAuthStore((state) => state.user);
+    const isLoading = useAuthStore((state) => state.isLoading);
+    const signIn = useAuthStore((state) => state.signIn);
+    const signOut = useAuthStore((state) => state.signOut);
+    const deleteAccount = useAuthStore((state) => state.deleteAccount);
 
-    return { session, user, isLoading, signOut, deleteAccount };
-};
+    return { session, user, isLoading, signIn, signOut, deleteAccount };
+}

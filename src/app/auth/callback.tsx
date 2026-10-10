@@ -6,7 +6,6 @@ import { ActivityIndicator, Text, View } from "react-native";
 
 export default function AuthCallbackScreen() {
     const router = useRouter();
-    const handleDeepLink = useAuthStore((s) => s.handelDeepLink);
     const url = Linking.useLinkingURL();
     const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +14,7 @@ export default function AuthCallbackScreen() {
 
         async function finishAuth() {
             try {
-                await handleDeepLink(url!);
+                await useAuthStore.getState().acceptAuthUrl(url!);
                 if (!useAuthStore.getState().session) {
                     setError("Sign-in did not finish. Try again.");
                     return;
@@ -29,7 +28,7 @@ export default function AuthCallbackScreen() {
         }
 
         void finishAuth();
-    }, [handleDeepLink, router, url]);
+    }, [router, url]);
 
     return (
         <View

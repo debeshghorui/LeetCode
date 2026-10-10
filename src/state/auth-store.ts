@@ -6,8 +6,14 @@ import {
     createSessionFromUrl,
     deleteOwnAccount,
     isAuthCallback,
+    signInWithOAuth,
 } from "@/lib/auth";
-import { identifyUser, resetUser } from "@/lib/observability";
+import {
+    identifyUser,
+    resetUser,
+    trackAuthCompleted,
+    type AuthProvider,
+} from "@/lib/observability";
 
 function syncObservabilityUser(session: Session | null) {
     if (session?.user.id) {
@@ -24,8 +30,8 @@ interface AuthState {
     isInitialized: boolean;
 
     initialize: () => () => void;
-    setSession: (session: Session | null) => void;
-    handelDeepLink: (url: string) => Promise<void>;
+    signIn: (provider: AuthProvider) => Promise<void>;
+    acceptAuthUrl: (url: string) => Promise<void>;
     signOut: () => Promise<void>;
     deleteAccount: () => Promise<void>;
 }
@@ -53,8 +59,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     isLoading: true,
     isInitialized: false,
 
-    setSession: (session) => {
-        applySession(set, session);
+    signIn: async (provider) => {
+        try {
+            const session = await signInWithOAuth(provider);
+            if (!session) return;
+            applySession(set, session);
+            trackAuthCompleted(provider, true);
+        } catch (error) {
+            trackAuthCompleted(provider, false);
+            throw error;
+        }
+    },
+
+    acceptAuthUrl: async (url) => {
+        if (!isAuthCallback(url)) return;
+
+        try {
+            const session = await createSessionFromUrl(url);
+            if (!session) throw new Error("Sign-in did not return a session.");
+            applySession(set, session);
+        } catch (error) {
+            console.error(error);
+            throw new Error(
+                error instanceof Error ? error.message : "Sign-in failed.",
+            );
+        }
     },
 
     initialize: () => {
@@ -103,7 +132,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         const handleUrl = (url: string | null) => {
             if (!url || !isAuthCallback(url)) return;
-            void get().handelDeepLink(url);
+            void get()
+                .acceptAuthUrl(url)
+                .catch(() => undefined);
         };
 
         void Linking.getInitialURL().then(handleUrl);
@@ -112,18 +143,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         // Keep the listeners for the process lifetime. Unsubscribing when the
         // root remounts drops the session Android creates on the way back from Chrome.
         return () => {};
-    },
-    handelDeepLink: async (url: string) => {
-        if (!isAuthCallback(url)) return;
-
-        try {
-            const session = await createSessionFromUrl(url);
-            if (!session) throw new Error("Sign-in did not return a session.");
-            applySession(set, session);
-        } catch (error) {
-            console.error(error);
-            throw new Error((error as Error).message);
-        }
     },
     signOut: async () => {
         const { error } = await supabase.auth.signOut();

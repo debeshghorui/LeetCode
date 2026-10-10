@@ -180,18 +180,6 @@ export async function signInWithOAuth(provider: Provider) {
 }
 
 /**
- *
- * @returns The session created from the OAuth URL.
- * @throws An error if the OAuth URL is not returned.
- * @throws An error if the OAuth URL is not a valid auth callback URL.
- * @throws An error if the OAuth URL is not a valid auth callback URL.
- */
-export async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-}
-
-/**
  * Deletes the signed-in Supabase user. Related profile, submission, and
  * progress rows cascade from `auth.users`. Requires `delete_own_account`
  * from `src/supabase/delete_own_account.sql`.

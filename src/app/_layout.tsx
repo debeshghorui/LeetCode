@@ -2,6 +2,7 @@ import {
     initObservability,
     registerSentryNavigation,
 } from "@/lib/observability";
+import { useAuth } from "@/hooks/use-auth";
 import { useAuthStore } from "@/state/auth-store";
 import * as Sentry from "@sentry/react-native";
 import {
@@ -23,16 +24,12 @@ initObservability();
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
-    const session = useAuthStore((s) => s.session);
-    const isLoading = useAuthStore((s) => s.isLoading);
-    const initialize = useAuthStore((s) => s.initialize);
+    const { session, isLoading } = useAuth();
+    const initialize = useAuthStore((state) => state.initialize);
     const segments = useSegments();
     const router = useRouter();
 
-    useEffect(() => {
-        const cleanup = initialize();
-        return cleanup;
-    }, [initialize]);
+    useEffect(() => initialize(), [initialize]);
 
     useEffect(() => {
         if (isLoading) return;
