@@ -33,7 +33,16 @@ const envSchema = z.object({
     EXPO_PUBLIC_POSTHOG_HOST: optionalUrl,
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
+// Expo only inlines EXPO_PUBLIC_* values when each one is read as
+// process.env.EXPO_PUBLIC_NAME. Passing process.env itself leaves them undefined.
+const parsedEnv = envSchema.safeParse({
+    APP_VARIANT: process.env.APP_VARIANT,
+    EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+    EXPO_PUBLIC_SUPABASE_KEY: process.env.EXPO_PUBLIC_SUPABASE_KEY,
+    EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
+    EXPO_PUBLIC_POSTHOG_KEY: process.env.EXPO_PUBLIC_POSTHOG_KEY,
+    EXPO_PUBLIC_POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+});
 
 export const envConfigurationError = parsedEnv.success
     ? null

@@ -5,6 +5,7 @@ import {
     ActivityIndicator,
     Alert,
     Image,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -30,6 +31,7 @@ export default function SignInScreen() {
     const [loading, setLoading] = useState<Provider | null>(null);
 
     useEffect(() => {
+        if (Platform.OS === "web") return;
         void WebBrowser.warmUpAsync();
         return () => {
             void WebBrowser.coolDownAsync();
