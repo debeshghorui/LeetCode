@@ -87,6 +87,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     plugins: [
         "expo-router",
+        "expo-font",
+        "expo-status-bar",
         [
             "expo-web-browser",
             {
