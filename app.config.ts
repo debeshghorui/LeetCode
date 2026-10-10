@@ -20,24 +20,31 @@ const APP_VARIANT = resolveAppVariant();
 const IS_DEV = APP_VARIANT === "development";
 const IS_PREVIEW = APP_VARIANT === "preview";
 
+// Published store identity. Production builds use these values as-is.
+// Dev and preview only append a suffix so those installs can sit beside the store app.
+const APP_IDENTITY = Object.freeze({
+    name: "MobLeet",
+    packageName: "com.debeshghorui.mobleet",
+});
+
 const getUniqueIdentifier = () => {
     if (IS_DEV) {
-        return "com.debeshghorui.mobleet.dev";
+        return `${APP_IDENTITY.packageName}.dev`;
     }
     if (IS_PREVIEW) {
-        return "com.debeshghorui.mobleet.preview";
+        return `${APP_IDENTITY.packageName}.preview`;
     }
-    return "com.debeshghorui.mobleet";
+    return APP_IDENTITY.packageName;
 };
 
 const getAppName = () => {
     if (IS_DEV) {
-        return "MobLeet (Dev)";
+        return `${APP_IDENTITY.name} (Dev)`;
     }
     if (IS_PREVIEW) {
-        return "MobLeet (Preview)";
+        return `${APP_IDENTITY.name} (Preview)`;
     }
-    return "MobLeet";
+    return APP_IDENTITY.name;
 };
 
 export default ({ config }: ConfigContext): ExpoConfig => ({

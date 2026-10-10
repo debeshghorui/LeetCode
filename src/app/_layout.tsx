@@ -3,9 +3,11 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-url-polyfill/auto";
+
+import { envConfigurationError } from "../../env";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -70,6 +72,38 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+    useEffect(() => {
+        if (envConfigurationError) {
+            SplashScreen.hideAsync();
+        }
+    }, []);
+
+    if (envConfigurationError) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 24,
+                    backgroundColor: "#0a0a0c",
+                }}
+            >
+                <Text
+                    style={{
+                        color: "#fafafa",
+                        fontSize: 20,
+                        fontWeight: "700",
+                    }}
+                >
+                    MobLeet could not start
+                </Text>
+                <Text style={{ color: "#9e9ea7", marginTop: 12, fontSize: 16 }}>
+                    {envConfigurationError}
+                </Text>
+            </View>
+        );
+    }
+
     return (
         <SafeAreaProvider>
             <StatusBar style="light" />

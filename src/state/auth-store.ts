@@ -30,13 +30,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         set({ isInitialized: true });
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            set({
-                session: session ?? null,
-                user: session?.user ?? null,
-                isLoading: false,
+        supabase.auth
+            .getSession()
+            .then(({ data: { session } }) => {
+                set({
+                    session: session ?? null,
+                    user: session?.user ?? null,
+                    isLoading: false,
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+                set({ isLoading: false });
             });
-        });
 
         const {
             data: { subscription },

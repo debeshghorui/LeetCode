@@ -18,20 +18,16 @@ const envSchema = z.object({
         .describe("The API key for the Supabase database"),
 });
 
-function createEnv(env: NodeJS.ProcessEnv) {
-    const safeParsedEnv = envSchema.safeParse(env);
+const parsedEnv = envSchema.safeParse(process.env);
 
-    if (!safeParsedEnv.success) {
-        console.error(
-            "Invalid environment variables:",
-            safeParsedEnv.error.format(),
-        );
-        throw new Error(
-            `Invalid environment variables: ${safeParsedEnv.error.message}`,
-        );
-    }
+export const envConfigurationError = parsedEnv.success
+    ? null
+    : "This build is missing its Supabase configuration, so MobLeet cannot open.";
 
-    return safeParsedEnv.data;
-}
-
-export const env = createEnv(process.env);
+export const env = parsedEnv.success
+    ? parsedEnv.data
+    : {
+          APP_VARIANT: "production" as const,
+          EXPO_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co",
+          EXPO_PUBLIC_SUPABASE_KEY: "missing",
+      };
