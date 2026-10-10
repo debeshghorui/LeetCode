@@ -1,5 +1,15 @@
+import {
+    initObservability,
+    registerSentryNavigation,
+} from "@/lib/observability";
 import { useAuthStore } from "@/state/auth-store";
-import { Stack, useRouter, useSegments } from "expo-router";
+import * as Sentry from "@sentry/react-native";
+import {
+    Stack,
+    useNavigationContainerRef,
+    useRouter,
+    useSegments,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -9,6 +19,7 @@ import "react-native-url-polyfill/auto";
 
 import { envConfigurationError } from "../../env";
 
+initObservability();
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
@@ -71,7 +82,13 @@ function RootNavigator() {
     );
 }
 
-export default function RootLayout() {
+function RootLayout() {
+    const navigationRef = useNavigationContainerRef();
+
+    useEffect(() => {
+        registerSentryNavigation(navigationRef);
+    }, [navigationRef]);
+
     useEffect(() => {
         if (envConfigurationError) {
             SplashScreen.hideAsync();
@@ -111,3 +128,5 @@ export default function RootLayout() {
         </SafeAreaProvider>
     );
 }
+
+export default Sentry.wrap(RootLayout);

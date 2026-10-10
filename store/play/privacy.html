@@ -45,18 +45,22 @@
                 address, display name, and profile image those providers share,
                 along with a user id. We store the code you submit, the
                 language, the result, and which problems you have solved. A
-                session token is stored on your device so you stay signed in.
+                session token is stored on your device so you stay signed in. We
+                also send crash and usage diagnostics that include your user id,
+                problem id, language, result, and timing. Those diagnostics do
+                not include your source code.
             </p>
             <h2>How we use it</h2>
             <p>
                 We use this information to sign you in, show your profile, save
-                submissions, and show your progress. MobLeet does not show ads
-                and does not sell your information.
+                submissions, show your progress, and keep the app reliable.
+                MobLeet does not show ads and does not sell your information.
             </p>
             <h2>Where it is stored</h2>
             <p>
                 Account and practice data are stored with Supabase. Sign-in is
-                handled by Google or GitHub through Supabase Auth.
+                handled by Google or GitHub through Supabase Auth. Crash reports
+                go to Sentry. Product usage events go to PostHog.
             </p>
             <h2>How long we keep it</h2>
             <p>

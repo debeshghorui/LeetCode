@@ -1,6 +1,11 @@
 import Constants from "expo-constants";
 
 import type { CaseResult } from "@/lib/judge";
+import {
+    trackApiFailed,
+    trackSubmitFinished,
+    trackSubmitStarted,
+} from "@/lib/observability";
 import type { LanguageId } from "@/lib/problems";
 import { supabase } from "@/lib/supabase";
 
@@ -13,6 +18,7 @@ export type SubmitResponse = {
     passed: number;
     total: number;
     results: CaseResult[];
+    judgeMs?: number;
 };
 
 export function resolveApiBaseUrl() {
@@ -45,22 +51,53 @@ export async function submitSolution(params: {
     if (!session?.access_token)
         throw new Error("You must be signed in to submit.");
 
-    const response = await fetch(`${resolveApiBaseUrl()}/api/submit`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(params),
+    trackSubmitStarted({
+        problemId: params.problemId,
+        language: params.language,
     });
+    const startedAt = Date.now();
+    let reportedFailure = false;
 
-    const payload = await response.json();
-    if (!response.ok) {
-        throw new Error(
-            payload.error ??
-                payload.message ??
-                `Submit failed (${response.status})`,
-        );
+    try {
+        const response = await fetch(`${resolveApiBaseUrl()}/api/submit`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify(params),
+        });
+
+        const payload = (await response.json()) as SubmitResponse & {
+            error?: string;
+            message?: string;
+        };
+        if (!response.ok) {
+            reportedFailure = true;
+            trackApiFailed({
+                route: "/api/submit",
+                status: response.status,
+            });
+            throw new Error(
+                payload.error ??
+                    payload.message ??
+                    `Submit failed (${response.status})`,
+            );
+        }
+
+        trackSubmitFinished({
+            problemId: params.problemId,
+            language: params.language,
+            status: payload.status,
+            durationMs: Date.now() - startedAt,
+            judgeMs: payload.judgeMs,
+            submissionId: payload.submissionId,
+        });
+        return payload;
+    } catch (error) {
+        if (!reportedFailure) {
+            trackApiFailed({ route: "/api/submit", status: 0 });
+        }
+        throw error;
     }
-    return payload as SubmitResponse;
 }

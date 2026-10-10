@@ -5,6 +5,7 @@ import {
     runAllTestCases,
 } from "@/lib/judge";
 import { runTaskAsync } from "@/lib/run-task";
+import { captureSubmitObservability } from "@/lib/sentry-server";
 import { getSupabaseAdmin, getUserFromRequest } from "@/lib/supabase-admin";
 import { StatusError } from "expo-server";
 
@@ -42,15 +43,38 @@ export async function POST(request: Request) {
     if (!testCases.length)
         throw new StatusError(400, "No test cases configured.");
 
-    const results = await runTaskAsync(() =>
-        runAllTestCases({
-            language,
-            sourceCode,
-            testCases,
-        }),
-    );
-
+    const judgeStartedAt = Date.now();
+    let results: CaseResult[];
+    try {
+        results = await runTaskAsync(() =>
+            runAllTestCases({
+                language,
+                sourceCode,
+                testCases,
+            }),
+        );
+    } catch (error) {
+        const judgeMs = Date.now() - judgeStartedAt;
+        await captureSubmitObservability({
+            userId: user.id,
+            problemId,
+            language: String(language ?? ""),
+            outcome: "error",
+            judgeMs,
+            error,
+        });
+        throw error;
+    }
+    const judgeMs = Date.now() - judgeStartedAt;
     const status = overallStatus(results);
+
+    await captureSubmitObservability({
+        userId: user.id,
+        problemId,
+        language: String(language ?? ""),
+        outcome: status,
+        judgeMs,
+    });
     const statusLabel = outcomeStatusLabel(status);
     const times = results
         .map((r) => r.timeSec)
@@ -114,5 +138,6 @@ export async function POST(request: Request) {
         passed: results.filter((r) => r.outcome === "accepted").length,
         total: results.length,
         results,
+        judgeMs,
     });
 }

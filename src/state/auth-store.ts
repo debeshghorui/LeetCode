@@ -6,6 +6,15 @@ import {
     deleteOwnAccount,
     isAuthCallback,
 } from "@/lib/auth";
+import { identifyUser, resetUser } from "@/lib/observability";
+
+function syncObservabilityUser(session: Session | null) {
+    if (session?.user.id) {
+        identifyUser(session.user.id);
+        return;
+    }
+    resetUser();
+}
 
 interface AuthState {
     session: Session | null;
@@ -33,6 +42,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         supabase.auth
             .getSession()
             .then(({ data: { session } }) => {
+                syncObservabilityUser(session);
                 set({
                     session: session ?? null,
                     user: session?.user ?? null,
@@ -47,6 +57,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
+            syncObservabilityUser(session);
             set({
                 session: session ?? null,
                 user: session?.user ?? null,
@@ -72,10 +83,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             console.error(error);
             throw new Error(error.message);
         }
+        resetUser();
         set({ session: null, user: null, isLoading: false });
     },
     deleteAccount: async () => {
         await deleteOwnAccount();
+        resetUser();
         set({ session: null, user: null, isLoading: false });
     },
 }));

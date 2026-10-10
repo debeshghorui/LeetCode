@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 
 import { signInWithOAuth } from "@/lib/auth";
+import { trackAuthCompleted } from "@/lib/observability";
 
 type Provider = "github" | "google";
 
@@ -39,8 +40,12 @@ export default function SignInScreen() {
         if (loading) return;
         setLoading(provider);
         try {
-            await signInWithOAuth(provider);
+            const session = await signInWithOAuth(provider);
+            if (session) {
+                trackAuthCompleted(provider, true);
+            }
         } catch (err) {
+            trackAuthCompleted(provider, false);
             Alert.alert(
                 "Sign in failed",
                 err instanceof Error ? err.message : "Unknown error",

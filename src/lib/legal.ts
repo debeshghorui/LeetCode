@@ -7,15 +7,15 @@ export const privacySections = [
     },
     {
         title: "Information we collect",
-        body: "When you continue with Google or GitHub, we receive the email address, display name, and profile image those providers share, along with a user id. We store the code you submit, the language, the result, and which problems you have solved. A session token is stored on your device so you stay signed in.",
+        body: "When you continue with Google or GitHub, we receive the email address, display name, and profile image those providers share, along with a user id. We store the code you submit, the language, the result, and which problems you have solved. A session token is stored on your device so you stay signed in. We also send crash and usage diagnostics that include your user id, problem id, language, result, and timing. Those diagnostics do not include your source code.",
     },
     {
         title: "How we use it",
-        body: "We use this information to sign you in, show your profile, save submissions, and show your progress. MobLeet does not show ads and does not sell your information.",
+        body: "We use this information to sign you in, show your profile, save submissions, show your progress, and keep the app reliable. MobLeet does not show ads and does not sell your information.",
     },
     {
         title: "Where it is stored",
-        body: "Account and practice data are stored with Supabase. Sign-in is handled by Google or GitHub through Supabase Auth. We do not use your data for advertising.",
+        body: "Account and practice data are stored with Supabase. Sign-in is handled by Google or GitHub through Supabase Auth. Crash reports go to Sentry. Product usage events go to PostHog. We do not use your data for advertising.",
     },
     {
         title: "How long we keep it",

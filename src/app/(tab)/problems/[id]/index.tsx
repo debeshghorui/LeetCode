@@ -10,6 +10,7 @@ import {
     type Problem,
     type SubmissionListItem,
 } from "@/lib/problems";
+import { trackProblemOpened } from "@/lib/observability";
 import { colors } from "@/lib/theme";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -60,6 +61,9 @@ export default function ProblemDetailsScreen() {
                 const data = await fetchProblemById(id);
                 if (!active) return;
                 setProblem(data);
+                if (data) {
+                    trackProblemOpened(data.id);
+                }
             } catch (err) {
                 if (active) {
                     setError(
