@@ -15,11 +15,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 
-import { signInWithOAuth } from "@/lib/auth";
-import { trackAuthCompleted } from "@/lib/observability";
-import { useAuthStore } from "@/state/auth-store";
-
-type Provider = "github" | "google";
+import { useAuth } from "@/hooks/use-auth";
+import type { AuthProvider } from "@/lib/observability";
 
 const LIME = "#bdf06e";
 const PEACH = "#fdba74";
@@ -29,7 +26,8 @@ const MUTED = "#9e9ea7";
 
 export default function SignInScreen() {
     const router = useRouter();
-    const [loading, setLoading] = useState<Provider | null>(null);
+    const { signIn } = useAuth();
+    const [loading, setLoading] = useState<AuthProvider | null>(null);
 
     useEffect(() => {
         if (Platform.OS === "web") return;
@@ -39,17 +37,12 @@ export default function SignInScreen() {
         };
     }, []);
 
-    async function handleSignIn(provider: Provider) {
+    async function handleSignIn(provider: AuthProvider) {
         if (loading) return;
         setLoading(provider);
         try {
-            const session = await signInWithOAuth(provider);
-            if (session) {
-                useAuthStore.getState().setSession(session);
-                trackAuthCompleted(provider, true);
-            }
+            await signIn(provider);
         } catch (err) {
-            trackAuthCompleted(provider, false);
             Alert.alert(
                 "Sign in failed",
                 err instanceof Error ? err.message : "Unknown error",

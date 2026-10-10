@@ -1,6 +1,9 @@
+import { captureSubmitObservability } from "@/lib/sentry-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import type { LanguageId } from "@/lib/problems";
+import { runTask, StatusError } from "expo-server";
 
-export const LANGUAGE_ID_MAP: Record<LanguageId, number> = {
+const LANGUAGE_ID_MAP: Record<LanguageId, number> = {
     javascript: 63,
     python: 71,
     java: 62,
@@ -20,7 +23,7 @@ export type CaseResult = {
     memoryKb: number | null;
 };
 
-export type ProblemTestCase = { input: string; output: string };
+type ProblemTestCase = { input: string; output: string };
 
 type CodeBoxResponse = {
     stdout: string | null;
@@ -30,15 +33,15 @@ type CodeBoxResponse = {
     memory: number | null;
 };
 
-export function normalise(value: string | null | undefined) {
+function normalise(value: string | null | undefined) {
     return (value ?? "").replace(/\r\n/g, "\n").trim();
 }
 
-export function parseTestCases(raw: unknown): ProblemTestCase[] {
+function parseTestCases(raw: unknown): ProblemTestCase[] {
     return Array.isArray(raw) ? (raw as ProblemTestCase[]) : [];
 }
 
-export async function executeOnCodeBox(params: {
+async function executeOnCodeBox(params: {
     languageId: number;
     sourceCode: string;
     stdin: string;
@@ -70,7 +73,7 @@ export async function executeOnCodeBox(params: {
     return JSON.parse(text) as CodeBoxResponse;
 }
 
-export function toCaseResult(
+function toCaseResult(
     index: number,
     testCase: ProblemTestCase,
     data: CodeBoxResponse,
@@ -98,7 +101,7 @@ export function toCaseResult(
     };
 }
 
-export async function runAllTestCases(params: {
+async function runAllTestCases(params: {
     language: LanguageId;
     sourceCode: string;
     testCases: ProblemTestCase[];
@@ -133,9 +136,173 @@ export async function runAllTestCases(params: {
     );
 }
 
-export function outcomeStatusLabel(outcome: RunOutcome) {
+function outcomeStatusLabel(outcome: RunOutcome) {
     if (outcome === "accepted") return "Accepted";
     if (outcome === "wrong-answer") return "Wrong Answer";
 
     return "Error";
+}
+
+function overallStatus(results: CaseResult[]) {
+    if (results.every((result) => result.outcome === "accepted")) {
+        return "accepted" as const;
+    }
+    if (results.some((result) => result.outcome === "error")) {
+        return "error" as const;
+    }
+    return "wrong-answer" as const;
+}
+
+function runTaskAsync<T>(fn: () => Promise<T>) {
+    return new Promise<T>((resolve, reject) => {
+        runTask(async () => {
+            try {
+                resolve(await fn());
+            } catch (error) {
+                reject(error);
+            }
+        });
+    });
+}
+
+function isLanguageId(value: unknown): value is LanguageId {
+    return value === "javascript" || value === "python" || value === "java";
+}
+
+export async function recordSubmission(input: {
+    userId: string;
+    problemId: unknown;
+    language: unknown;
+    sourceCode: unknown;
+}) {
+    const { userId, problemId, language, sourceCode } = input;
+
+    if (
+        typeof problemId !== "string" ||
+        !problemId ||
+        typeof sourceCode !== "string" ||
+        !sourceCode
+    ) {
+        throw new StatusError(
+            400,
+            "`problemId` and `sourceCode` are required.",
+        );
+    }
+
+    if (!isLanguageId(language)) {
+        throw new StatusError(
+            400,
+            "`language` must be javascript, python, or java.",
+        );
+    }
+
+    const admin = getSupabaseAdmin();
+    const { data: problem } = await admin
+        .from("problems")
+        .select("id, test_cases")
+        .eq("id", problemId)
+        .maybeSingle();
+
+    if (!problem) throw new StatusError(404, "Problem not found");
+
+    const testCases = parseTestCases(problem.test_cases);
+    if (!testCases.length) {
+        throw new StatusError(400, "No test cases configured.");
+    }
+
+    const judgeStartedAt = Date.now();
+    let results: CaseResult[];
+    try {
+        results = await runTaskAsync(() =>
+            runAllTestCases({ language, sourceCode, testCases }),
+        );
+    } catch (error) {
+        await captureSubmitObservability({
+            userId,
+            problemId,
+            language: String(language ?? ""),
+            outcome: "error",
+            judgeMs: Date.now() - judgeStartedAt,
+            error,
+        });
+        throw error;
+    }
+
+    const judgeMs = Date.now() - judgeStartedAt;
+    const status = overallStatus(results);
+
+    await captureSubmitObservability({
+        userId,
+        problemId,
+        language: String(language ?? ""),
+        outcome: status,
+        judgeMs,
+    });
+
+    const statusLabel = outcomeStatusLabel(status);
+    const times = results
+        .map((result) => result.timeSec)
+        .filter((time): time is number => time != null);
+    const memories = results
+        .map((result) => result.memoryKb)
+        .filter((memory): memory is number => memory != null);
+
+    const { data: submission, error: submissionError } = await admin
+        .from("submissions")
+        .insert({
+            user_id: userId,
+            problem_id: problemId,
+            source_code: { [language]: sourceCode },
+            language,
+            status: statusLabel,
+            memory: memories.length ? `${Math.max(...memories)} KB` : null,
+            time: times.length ? `${Math.max(...times).toFixed(3)} s` : null,
+        })
+        .select("id")
+        .single();
+
+    if (submissionError || !submission) {
+        throw new StatusError(
+            500,
+            submissionError?.message ?? "Failed to save submission.",
+        );
+    }
+
+    await admin.from("test_case_results").insert(
+        results.map((result) => ({
+            submission_id: submission.id,
+            test_case: result.index + 1,
+            passed: result.outcome === "accepted",
+            stdout: result.actualOutput,
+            expected: result.expectedOutput,
+            stderr: result.stderr || null,
+            status: outcomeStatusLabel(result.outcome),
+            memory: result.memoryKb != null ? `${result.memoryKb} KB` : null,
+            time:
+                result.timeSec != null
+                    ? `${result.timeSec.toFixed(3)} s`
+                    : null,
+        })),
+    );
+
+    const solved = status === "accepted";
+    if (solved) {
+        await admin
+            .from("problem_solved")
+            .upsert(
+                { user_id: userId, problem_id: problemId },
+                { onConflict: "user_id,problem_id", ignoreDuplicates: true },
+            );
+    }
+
+    return {
+        submissionId: submission.id,
+        status: statusLabel,
+        solved,
+        passed: results.filter((result) => result.outcome === "accepted")
+            .length,
+        total: results.length,
+        results,
+        judgeMs,
+    };
 }
