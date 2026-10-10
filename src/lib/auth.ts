@@ -2,14 +2,28 @@ import { supabase } from "@/lib/supabase";
 import type { Provider, Session } from "@supabase/supabase-js";
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
+import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const codeExchanges = new Map<string, Promise<Session | undefined>>();
 
+// Three slashes keep "auth" in the path. `mobleet://auth/callback` is parsed as
+// host "auth" and path "/callback", so Expo Router never opens the callback screen.
+export const nativeAuthRedirect = "mobleet:///auth/callback";
+
 export function getAuthRedirectUrl() {
-    return makeRedirectUri({ path: "auth/callback" });
+    if (Platform.OS === "web") {
+        return makeRedirectUri({ path: "auth/callback" });
+    }
+
+    return makeRedirectUri({
+        native: nativeAuthRedirect,
+        path: "auth/callback",
+        scheme: "mobleet",
+    });
 }
 
 export function isAuthCallback(url: string) {
@@ -28,6 +42,10 @@ export async function createSessionFromUrl(url: string) {
 
     if (errorCode) {
         throw new Error(`Auth error: ${errorCode}`);
+    }
+
+    if (params.error || params.error_description) {
+        throw new Error(params.error_description || params.error);
     }
 
     if (params.code) {
@@ -74,14 +92,17 @@ export async function createSessionFromUrl(url: string) {
  */
 function getRedirectSetupMessage(redirectUri: string) {
     return [
-        "Supabase rejected the app redirect URL and sent you to localhost instead.",
+        "Supabase sent the browser to localhost, which this phone cannot open.",
         "",
-        "Open Supabase Dashboard → Authentication → URL Configuration and add:",
+        "Open Supabase Dashboard → Authentication → URL Configuration.",
+        "Set Site URL to:",
         `  ${redirectUri}`,
-        "  exp://**",
+        "Add these Redirect URLs:",
+        `  ${redirectUri}`,
         "  mobleet://**",
+        "  exp://**",
         "",
-        "Then try signing in again.",
+        "Save, then try signing in again. The installed app picks this up without a new build.",
     ].join("\n");
 }
 
@@ -114,19 +135,48 @@ export async function signInWithOAuth(provider: Provider) {
     if (error) throw error;
     if (!data.url) throw new Error("No OAuth URL returned");
 
-    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo, {
-        showInRecents: true,
+    // Android reports the browser as dismissed when the app resumes, often
+    // before the deep-link event arrives. Keep listening so the code is not lost.
+    let callbackUrl: string | null = null;
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+        if (isAuthCallback(url)) callbackUrl = url;
     });
 
-    if (result.type === "success") {
-        return createSessionFromUrl(result.url);
-    }
+    try {
+        const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectTo,
+            { showInRecents: true },
+        );
 
-    if (result.type === "cancel" || result.type === "dismiss") {
-        return;
-    }
+        let url =
+            result.type === "success" && isAuthCallback(result.url)
+                ? result.url
+                : callbackUrl;
 
-    throw new Error(getRedirectSetupMessage(redirectTo));
+        if (!url) {
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            url = callbackUrl;
+        }
+
+        if (!url) {
+            const initialUrl = await Linking.getInitialURL();
+            if (initialUrl && isAuthCallback(initialUrl)) url = initialUrl;
+        }
+
+        if (url) return createSessionFromUrl(url);
+
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+        if (session) return session;
+
+        if (result.type === "cancel" || result.type === "dismiss") return;
+
+        throw new Error(getRedirectSetupMessage(redirectTo));
+    } finally {
+        subscription.remove();
+    }
 }
 
 /**

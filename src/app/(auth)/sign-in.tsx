@@ -17,6 +17,7 @@ import * as WebBrowser from "expo-web-browser";
 
 import { signInWithOAuth } from "@/lib/auth";
 import { trackAuthCompleted } from "@/lib/observability";
+import { useAuthStore } from "@/state/auth-store";
 
 type Provider = "github" | "google";
 
@@ -44,6 +45,7 @@ export default function SignInScreen() {
         try {
             const session = await signInWithOAuth(provider);
             if (session) {
+                useAuthStore.getState().setSession(session);
                 trackAuthCompleted(provider, true);
             }
         } catch (err) {

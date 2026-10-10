@@ -44,7 +44,7 @@ function RootNavigator() {
 
         if (!session && !inAuthGroup && !inAuthCallback && !inLegal) {
             router.replace("/(auth)/sign-in" as never);
-        } else if (session && inAuthGroup) {
+        } else if (session && (inAuthGroup || inAuthCallback)) {
             router.replace("/" as never);
         }
 

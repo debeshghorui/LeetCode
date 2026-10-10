@@ -16,6 +16,10 @@ export default function AuthCallbackScreen() {
         async function finishAuth() {
             try {
                 await handleDeepLink(url!);
+                if (!useAuthStore.getState().session) {
+                    setError("Sign-in did not finish. Try again.");
+                    return;
+                }
                 router.replace("/" as never);
             } catch (err) {
                 setError(
