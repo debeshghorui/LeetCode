@@ -1,3 +1,4 @@
+// Stack for the problem list, the statement, and the editor.
 import { colors } from "@/lib/theme";
 import { Stack } from "expo-router";
 

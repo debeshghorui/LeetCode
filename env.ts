@@ -1,3 +1,7 @@
+// Client env. Each EXPO_PUBLIC_* value must be read as its own process.env
+// key or the Expo bundler leaves it undefined. A failed parse sets
+// envConfigurationError and the root layout shows a startup message.
+// Service-role and CodeBox tokens do not belong in this file.
 import { z } from "zod";
 
 const optionalUrl = z.preprocess(

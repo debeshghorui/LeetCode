@@ -1,3 +1,5 @@
+// Scroll padding. The bottom safe-area inset is opt-in because tab screens
+// already sit above the tab bar.
 import { useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

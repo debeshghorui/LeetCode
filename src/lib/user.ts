@@ -1,3 +1,5 @@
+// Name and avatar come from OAuth user_metadata. The profiles table only
+// stores the user id.
 import type { User } from "@supabase/supabase-js";
 
 export function getDisplayName(user: User) {

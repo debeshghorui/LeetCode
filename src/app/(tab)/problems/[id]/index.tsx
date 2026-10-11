@@ -1,3 +1,5 @@
+// Statement, examples, and this user's past submissions. The Solutions tab is
+// a locked placeholder — reference solutions are not granted to the client.
 import { useAuth } from "@/hooks/use-auth";
 import { useScreenInsets } from "@/hooks/use-screen-insets";
 import {

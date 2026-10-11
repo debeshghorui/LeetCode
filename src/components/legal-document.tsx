@@ -1,3 +1,5 @@
+// Shared privacy and terms layout. Back goes to sign-in when this screen was
+// opened with no history, such as a store-listing link.
 import { colors } from "@/lib/theme";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";

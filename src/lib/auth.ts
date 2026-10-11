@@ -1,3 +1,6 @@
+// Google and GitHub sign-in. The native redirect must stay
+// mobleet:///auth/callback (three slashes). Android can dismiss the browser
+// before the deep link arrives, so this file also listens on Linking.
 import { supabase } from "@/lib/supabase";
 import type { Provider, Session } from "@supabase/supabase-js";
 import { makeRedirectUri } from "expo-auth-session";

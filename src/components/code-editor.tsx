@@ -1,3 +1,6 @@
+// Highlight is a Prism <Text> layer under a transparent TextInput. Both layers
+// share font, size, line height, and padding so the caret stays on the color.
+// On Android the input color must be alpha-0, not `transparent`.
 import type { LanguageId } from "@/lib/problems";
 import { grammarForLanguage } from "@/lib/prism-languages";
 import type { Token, TokenStream } from "prismjs";

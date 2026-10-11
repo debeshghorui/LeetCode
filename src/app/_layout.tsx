@@ -1,3 +1,6 @@
+// Root gate. No session goes to sign-in, except the OAuth callback and legal
+// pages. A session on the auth screens goes home. The splash stays up until
+// that decision. Observability starts at import time, before the first render.
 import {
     initObservability,
     registerSentryNavigation,

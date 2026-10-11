@@ -1,3 +1,4 @@
+// OAuth return route. Turns the redirect URL into a session, then goes home.
 import { useAuthStore } from "@/state/auth-store";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";

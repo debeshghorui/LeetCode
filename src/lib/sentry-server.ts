@@ -1,3 +1,4 @@
+// Judge-side Sentry (@sentry/node). Do not import this from a screen.
 import * as Sentry from "@sentry/node";
 
 let initialized = false;

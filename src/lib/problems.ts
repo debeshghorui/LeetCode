@@ -1,3 +1,8 @@
+// Problem reads for a signed-in user. Selects only columns granted to
+// `authenticated`. test_cases and reference_solutions stay on the server.
+//
+// App language ids are lowercase. Snippet and example keys in Postgres are
+// uppercase (JAVASCRIPT, PYTHON, JAVA).
 import { colors } from "@/lib/theme";
 import { supabase } from "@/lib/supabase";
 

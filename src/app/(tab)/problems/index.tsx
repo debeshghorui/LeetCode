@@ -1,3 +1,5 @@
+// Problem list. Search and difficulty filters run on the device. The query
+// itself is only the public problem columns.
 import { useScreenInsets } from "@/hooks/use-screen-insets";
 import {
     difficultyLabel,

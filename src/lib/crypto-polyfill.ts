@@ -1,3 +1,4 @@
+// Supabase PKCE needs crypto.subtle.digest. Hermes does not provide it.
 import * as ExpoCrypto from "expo-crypto";
 import "react-native-get-random-values";
 

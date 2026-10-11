@@ -1,3 +1,5 @@
+// Account, submission heatmap, sign out, and delete account.
+// Delete calls delete_own_account; related rows cascade from auth.users.
 import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { useAuth } from "@/hooks/use-auth";
 import { useScreenInsets } from "@/hooks/use-screen-insets";

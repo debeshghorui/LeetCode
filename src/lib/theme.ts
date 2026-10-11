@@ -1,3 +1,4 @@
+// Shared palette. Background is #0a0a0c and the accent is lime #bdf06e.
 export const colors = {
     lime: "#bdf06e",
     peach: "#fdba74",

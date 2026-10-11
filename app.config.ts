@@ -1,3 +1,6 @@
+// Dev and preview installs use a name and bundle-id suffix so they can sit
+// beside the store app. Production uses com.debeshghorui.mobleet as-is.
+// APP_VARIANT must be development, preview, or production.
 import type { ConfigContext, ExpoConfig } from "@expo/config";
 
 type AppVariant = "development" | "preview" | "production";

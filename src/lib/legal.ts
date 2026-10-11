@@ -1,3 +1,5 @@
+// Privacy and terms copy. The privacy screen promises that diagnostics exclude
+// source code and that account deletion cascades. Keep this file in step with that.
 export const legalUpdated = "10 October 2026";
 
 export const privacySections = [

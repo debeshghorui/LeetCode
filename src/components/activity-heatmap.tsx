@@ -1,3 +1,4 @@
+// Year grid of submission counts from fetchUserSubmissionActivity.
 import { toDateKey } from "@/lib/problems";
 import { colors } from "@/lib/theme";
 import { useMemo, useState } from "react";

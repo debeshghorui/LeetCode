@@ -1,3 +1,5 @@
+// Editor. Starter code comes from code_snippets. Submit goes through
+// submitSolution, which calls POST /api/submit. This screen never sees tests.
 import { CodeEditor } from "@/components/code-editor";
 import { useScreenInsets } from "@/hooks/use-screen-insets";
 import { submitSolution, type CaseResult } from "@/lib/codebox";

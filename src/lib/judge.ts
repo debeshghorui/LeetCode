@@ -1,3 +1,9 @@
+// Server judge. Reads test_cases with the service role — the client is not
+// granted that column — runs each case on CodeBox, then writes submissions,
+// test_case_results, and problem_solved.
+//
+// language_id values are the Judge0 ids chaicode.net expects. A case is
+// accepted only when status id is 3 or 4 and trimmed stdout matches.
 import { captureSubmitObservability } from "@/lib/sentry-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import type { LanguageId } from "@/lib/problems";

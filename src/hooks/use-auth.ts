@@ -1,3 +1,4 @@
+// Screen-facing auth. Sign-in, sign-out, and account deletion go through here.
 import { useAuthStore } from "@/state/auth-store";
 
 export function useAuth() {

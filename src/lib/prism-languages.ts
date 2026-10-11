@@ -1,3 +1,5 @@
+// Prism grammars for the editor. Java is built on clike, so that import
+// has to stay above prism-java.
 import Prism from "prismjs";
 
 import "prismjs/components/prism-clike";

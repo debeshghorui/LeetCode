@@ -1,3 +1,5 @@
+// Client Sentry and PostHog. Both no-op when their keys are missing.
+// Events carry user id, problem id, language, and timing — never source code.
 import * as Application from "expo-application";
 import Constants from "expo-constants";
 import { isRunningInExpoGo } from "expo";

@@ -1,3 +1,9 @@
+-- Problem, profile, submission, and progress schema.
+-- Apply once in the Supabase SQL editor before seed.sql.
+-- Authenticated users can read public problem columns only.
+-- test_cases and reference_solutions stay service-role only.
+-- Submission writes go through the judging API, not the client.
+
 -- Difficulty enum (idempotent)
 do $$
 begin

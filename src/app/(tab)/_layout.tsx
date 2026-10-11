@@ -1,3 +1,4 @@
+// Home, Problems, and Profile. The problem detail stack hides this bar itself.
 import { useTabBarStyle } from "@/hooks/use-tab-bar-style";
 import { colors } from "@/lib/theme";
 import { Ionicons } from "@expo/vector-icons";

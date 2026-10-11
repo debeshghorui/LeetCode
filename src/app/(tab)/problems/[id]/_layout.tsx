@@ -1,3 +1,4 @@
+// Statement and editor. Hides the tab bar for this stack.
 import { useHideTabBar } from "@/hooks/use-tab-bar-style";
 import { colors } from "@/lib/theme";
 import { Stack } from "expo-router";

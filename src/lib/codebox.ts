@@ -1,3 +1,6 @@
+// Client side of a submit. Posts to the Expo API route with the user's access
+// token. Dev uses the Metro host; a release build needs EXPO_PUBLIC_API_BASE_URL.
+// This module does not talk to CodeBox and must not read hidden tests.
 import Constants from "expo-constants";
 
 import type { CaseResult } from "@/lib/judge";

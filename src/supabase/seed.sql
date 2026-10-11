@@ -1,5 +1,5 @@
 -- Seed problems into public.problems.
--- Source of truth for editing: supabase/seed/problems.ts
+-- Source of truth for editing: src/supabase/seed/problems.ts
 -- Safe to re-run: skips titles that already exist.
 --
 -- Apply in Supabase SQL Editor (paste & run), or:

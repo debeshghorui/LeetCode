@@ -1,3 +1,5 @@
+// Session store. initialize() subscribes once and keeps those listeners for
+// the process lifetime. Screens should use useAuth(), not this store.
 import { create } from "zustand";
 import { supabase } from "../lib/supabase";
 import type { Session, User } from "@supabase/supabase-js";

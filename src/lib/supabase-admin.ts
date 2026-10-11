@@ -1,3 +1,5 @@
+// Server-only Supabase clients. getSupabaseAdmin uses the service role and
+// bypasses row-level security. Never import this from a screen.
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let admin: SupabaseClient | null = null;

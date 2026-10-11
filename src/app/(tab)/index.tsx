@@ -1,3 +1,4 @@
+// Home. Solved count and the first problem load after the session is ready.
 import { useAuth } from "@/hooks/use-auth";
 import { useScreenInsets } from "@/hooks/use-screen-insets";
 import { fetchProblems, fetchSolvedCount } from "@/lib/problems";

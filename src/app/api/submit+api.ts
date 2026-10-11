@@ -1,3 +1,5 @@
+// POST /api/submit. The phone sends the user's access token. Hidden tests are
+// read, and submission rows are written, only inside recordSubmission.
 import { recordSubmission } from "@/lib/judge";
 import { getUserFromRequest } from "@/lib/supabase-admin";
 import { StatusError } from "expo-server";

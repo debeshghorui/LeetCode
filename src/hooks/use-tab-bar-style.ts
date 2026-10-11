@@ -1,3 +1,5 @@
+// Tab bar metrics. useHideTabBar clears the bar for the problem detail stack
+// so the statement and editor use the full screen.
 import { useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import type { ViewStyle } from "react-native";

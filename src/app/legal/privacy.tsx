@@ -1,3 +1,4 @@
+// Copy lives in src/lib/legal.ts so the screen and the store listing stay aligned.
 import { LegalDocument } from "@/components/legal-document";
 import { legalUpdated, privacySections } from "@/lib/legal";
 

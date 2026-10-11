@@ -1,3 +1,5 @@
+// Google and GitHub buttons. The session is stored by useAuthStore; this
+// screen only starts the flow and shows the error.
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";

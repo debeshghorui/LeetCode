@@ -1,3 +1,5 @@
+// Browser Supabase client. Anon key, PKCE, session in AsyncStorage.
+// Persistence is skipped during static web render, where there is no window.
 import "@/lib/crypto-polyfill";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
