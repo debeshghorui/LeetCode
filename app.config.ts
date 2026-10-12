@@ -86,7 +86,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     web: {
         ...config.web,
-        output: "static",
+        // Server export is what ships POST /api/submit. A static export has no judge.
+        output: "server",
         favicon: "./assets/images/favicon.png",
     },
     updates: {

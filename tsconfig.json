@@ -10,6 +10,7 @@
     "include": [
         "src/**/*.ts",
         "src/**/*.tsx",
+        "app.config.ts",
         "env.ts",
         ".expo/types/**/*.ts",
         "expo-env.d.ts"
